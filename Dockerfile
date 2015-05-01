@@ -25,5 +25,5 @@ ENV REPO /opt/hdp-flume-sandbox/
 WORKDIR $REPO
 
 # run Flume on some logs
-CMD flume-ng agent -n agent_1 -c conf -f conf/flume_${CONF_FILE}.conf -Dflume.root.logger=INFO,console
+CMD flume-ng agent -n agent_${CONF_FILE} -c conf -f conf/flume_${CONF_FILE}.conf -Dflume.root.logger=INFO,console
 
