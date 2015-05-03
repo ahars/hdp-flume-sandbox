@@ -17,5 +17,10 @@ docker run -t -i --rm \
 	-e CONF_FILE=$1 \
 	ahars/hdp-flume-sandbox
 
+echo
+echo ACCEPTED
 ls -lR data/ACCEPTED
+echo
+echo REJECTED
 ls -lR data/REJECTED
+echo
