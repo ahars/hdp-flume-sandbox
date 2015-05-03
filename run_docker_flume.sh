@@ -3,9 +3,9 @@ if [ $# -ne 1 ]; then
 	exit 0
 fi
 
-mv data/logs/input_1.log.COMPLETED data/logs/input_1.log
+mv data/input/example.log.COMPLETED data/input/example.log
 rm data/ACCEPTED/dest_1/*
-rm REJECTED/*
+rm data/REJECTED/*
 
 boot2docker start
 $(boot2docker shellinit)
