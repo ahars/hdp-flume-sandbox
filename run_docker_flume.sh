@@ -11,7 +11,6 @@ rm data/ACCEPTED/dest_4/*
 rm data/ACCEPTED/others/*
 rm data/REJECTED/*
 
-boot2docker start
 $(boot2docker shellinit)
 
 docker build --rm -t ahars/hdp-flume-sandbox .
@@ -36,3 +35,4 @@ ls -lR data/REJECTED
 echo
 echo "*********************************************************"
 echo
+
