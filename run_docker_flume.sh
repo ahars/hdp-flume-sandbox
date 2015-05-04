@@ -5,6 +5,10 @@ fi
 
 mv data/input/example.log.COMPLETED data/input/example.log
 rm data/ACCEPTED/dest_1/*
+rm data/ACCEPTED/dest_2/*
+rm data/ACCEPTED/dest_3/*
+rm data/ACCEPTED/dest_4/*
+rm data/ACCEPTED/others/*
 rm data/REJECTED/*
 
 boot2docker start
@@ -18,9 +22,17 @@ docker run -t -i --rm \
 	ahars/hdp-flume-sandbox
 
 echo
+echo "*********************************************************"
+echo JOB FLUME $1
+echo
+echo INPUT
+ls -lR data/input
+echo
 echo ACCEPTED
 ls -lR data/ACCEPTED
 echo
 echo REJECTED
 ls -lR data/REJECTED
+echo
+echo "*********************************************************"
 echo
