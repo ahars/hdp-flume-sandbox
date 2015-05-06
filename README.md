@@ -1,7 +1,13 @@
 # hdp-flume-sandbox
-try on Apache Flume
+Two ways to process logs with Apache Flume 1.5.2
 
-## Run flume on Docker
+## Docker with local file system
 ```
-./run_docker_flume.sh "JOB_NUMBER"
+./run_flume_local.sh "JOB_NUMBER"
 ```
+
+## Docker with hadoop file system
+```
+./run_flume_hadoop_sh "JOB_NUMBER"
+```
+
