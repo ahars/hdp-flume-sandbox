@@ -3,7 +3,7 @@ if [ $# -ne 1 ]; then
 	exit 0
 fi
 
-dir='/Users/ahars/Github/hdp-flume-sandbox/local_process/'
+dir='/Users/ahars/Github/hdp-flume-sandbox/local/'
 
 mv $dir/data/input/example.log.COMPLETED $dir/data/input/example.log
 rm $dir/data/ACCEPTED/dest_1/*
@@ -15,12 +15,12 @@ rm $dir/data/REJECTED/*
 
 $(boot2docker shellinit)
 
-docker build --rm -t ahars/hdp-flume-sandbox $dir
+docker build --rm -t ahars/hdp-flume-sandbox-local $dir
 docker run -t -i --rm \
-	--name flume \
+	--name flume-local \
 	-v $dir:/opt/hdp-flume-sandbox/ \
 	-e CONF_FILE=$1 \
-	ahars/hdp-flume-sandbox
+	ahars/hdp-flume-sandbox-local
 
 echo
 echo "*********************************************************"
