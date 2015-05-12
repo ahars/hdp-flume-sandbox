@@ -76,34 +76,35 @@ RUN yum -y install hadoop \
 	lzo \
 	lzo-devel \
 	hadooplzo \
-	hadooplzo-native 
+	hadooplzo-native \
+	hive-hcatalog \
+	flume \
+	flume-agent
 
 # Create the directories for Hadoop
 RUN mkdir -p $DFS_NAME_DIR \
-	$FS_CHECKPOINT_DIR \
-	$DFS_DATA_DIR \
-	$YARN_LOCAL_DIR \
-	$YARN_LOCAL_LOG_DIR \
-	$HDFS_LOG_DIR \
-	$YARN_LOG_DIR \
-	$HDFS_PID_DIR \
-	$YARN_PID_DIR \
-	$MAPRED_LOG_DIR \
-	$MAPRED_PID_DIR 
-
-RUN chmod -R 755 $DFS_NAME_DIR \
-	$FS_CHECKPOINT_DIR \
-	$YARN_LOCAL_DIR \
-	$YARN_LOCAL_LOG_DIR \
-	$HDFS_LOG_DIR \
-	$YARN_LOG_DIR \
-	$HDFS_PID_DIR \
-	$YARN_PID_DIR \
-	$MAPRED_LOG_DIR \
-	$MAPRED_PID_DIR; \
-	chmod -R 750 $DFS_DATA_DIR
-
-RUN chown -R $HDFS_USER:$HADOOP_GROUP $DFS_NAME_DIR; \ 
+		$FS_CHECKPOINT_DIR \
+		$DFS_DATA_DIR \
+		$YARN_LOCAL_DIR \
+		$YARN_LOCAL_LOG_DIR \
+		$HDFS_LOG_DIR \
+		$YARN_LOG_DIR \
+		$HDFS_PID_DIR \
+		$YARN_PID_DIR \
+		$MAPRED_LOG_DIR \
+		$MAPRED_PID_DIR; \
+	chmod -R 755 $DFS_NAME_DIR \
+		$FS_CHECKPOINT_DIR \
+		$YARN_LOCAL_DIR \
+		$YARN_LOCAL_LOG_DIR \
+		$HDFS_LOG_DIR \
+		$YARN_LOG_DIR \
+		$HDFS_PID_DIR \
+		$YARN_PID_DIR \
+		$MAPRED_LOG_DIR \
+		$MAPRED_PID_DIR; \
+	chmod -R 750 $DFS_DATA_DIR; \
+	chown -R $HDFS_USER:$HADOOP_GROUP $DFS_NAME_DIR; \ 
 	chown -R $HDFS_USER:$HADOOP_GROUP $FS_CHECKPOINT_DIR; \
 	chown -R $HDFS_USER:$HADOOP_GROUP $DFS_DATA_DIR; \
 	chown -R $YARN_USER:$HADOOP_GROUP $YARN_LOCAL_DIR; \ 
@@ -115,10 +116,9 @@ RUN chown -R $HDFS_USER:$HADOOP_GROUP $DFS_NAME_DIR; \
 	chown -R $MAPRED_USER:$HADOOP_GROUP $MAPRED_LOG_DIR; \
 	chown -R $MAPRED_USER:$HADOOP_GROUP $MAPRED_PID_DIR 
 
-RUN echo 1 > $ZOOKEEPER_DATA_DIR/myid
 RUN hdp-select set all 2.2.0.0-2041
 
-# Configuration of the packages
+# Configuration of HDFS
 RUN sed -i -e "s/TODO-NAMENODE-HOSTNAME:PORT/localhost:8020/g" /opt/hdp_install_helper/configuration_files/core_hadoop/core-site.xml; \
 	sed -i -e "s/TODO-DFS-NAME-DIR/$(echo $DFS_NAME_DIR | sed -e "s/ /,/g" | sed -e "s/\//\\\\\//g")/g" /opt/hdp_install_helper/configuration_files/core_hadoop/hdfs-site.xml; \
 	sed -i -e "s/TODO-DFS-DATA-DIR/$(echo $DFS_DATA_DIR | sed -e "s/ /,/g" | sed -e "s/\//\\\\\//g")/g" /opt/hdp_install_helper/configuration_files/core_hadoop/hdfs-site.xml; \
@@ -138,11 +138,18 @@ RUN rm -r $HADOOP_CONF_DIR; \
 	chown -R $HDFS_USER:$HADOOP_GROUP $HADOOP_CONF_DIR/../; \
 	chmod -R 755 $HADOOP_CONF_DIR/../ 
 
-# Launch of HDFS namenode & datanode
+# Configuration of Flume
+RUN cp /etc/flume/conf/flume-env.sh.template /etc/flume/conf/flume-env.sh; \
+	echo >> /etc/flume/conf/flume-env.sh; \
+	echo 'JAVA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=4159 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Xms100m -Xmx4000m"' >> /etc/flume/conf/flume-env.sh
+
+# Launch HDFS namenode & datanode
 RUN /usr/hdp/current/hadoop-hdfs-namenode/../hadoop/bin/hdfs namenode -format; \
 	/usr/hdp/current/hadoop-hdfs-namenode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start namenode; \
 	/usr/hdp/current/hadoop-hdfs-datanode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start datanode; \
 	hadoop fs -mkdir /test; \
 	hadoop fs -ls / 
 
+# Launch Flume agent
+RUN /usr/hdp/current/flume-server/bin/flume-ng agent -c /etc/flume/conf -f /etc/flume/conf/ flume.conf -n agent 
 
