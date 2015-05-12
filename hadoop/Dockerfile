@@ -37,7 +37,7 @@ RUN groupadd $HADOOP_GROUP; \
 	useradd -g $HADOOP_GROUP $HIVE_USER; \
 	useradd -g $HADOOP_GROUP $WEBHCAT_USER
 
-# Install Hadoop packages
+# environment preparation
 RUN yum -y update; \
 	yum clean all 
 RUN yum -y install tar \
@@ -45,10 +45,9 @@ RUN yum -y install tar \
 	wget
 
 # install Java 8
-RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u31-b13/jdk-8u31-linux-x64.rpm" -O /tmp/jdk-8-linux-x64.rpm
-RUN yum -y install /tmp/jdk-8-linux-x64.rpm
-
-RUN alternatives --install /usr/bin/java jar /usr/java/latest/bin/java 200000; \
+RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u31-b13/jdk-8u31-linux-x64.rpm" -O /tmp/jdk-8-linux-x64.rpm; \
+	yum -y install /tmp/jdk-8-linux-x64.rpm; \
+	alternatives --install /usr/bin/java jar /usr/java/latest/bin/java 200000; \
 	alternatives --install /usr/bin/javaws javaws /usr/java/latest/bin/javaws 200000; \
 	alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 200000
 
@@ -58,13 +57,13 @@ RUN wget -nv http://public-repo-1.hortonworks.com/HDP/centos6/2.x/GA/2.2.0.0/hdp
 # Disable SELinux & IPTables
 RUN setenforce 0; \
 	chkconfig iptables off
-#	service iptables stop 
 
 # Download companion files
 RUN mkdir -p /opt/hdp_install_helper
 RUN wget -qO- http://public-repo-1.hortonworks.com/HDP/tools/2.2.0.0/hdp_manual_install_rpm_helper_files-2.2.0.0.2041.tar.gz \
 	| tar zxvf - -C /opt/hdp_install_helper --strip 1
 
+# Install the Hadoop packages
 RUN yum -y install hadoop \
 	hadoop-hdfs \
 	hadoop-libhdfs \
@@ -119,6 +118,7 @@ RUN chown -R $HDFS_USER:$HADOOP_GROUP $DFS_NAME_DIR; \
 RUN echo 1 > $ZOOKEEPER_DATA_DIR/myid
 RUN hdp-select set all 2.2.0.0-2041
 
+# Configuration of the packages
 RUN sed -i -e "s/TODO-NAMENODE-HOSTNAME:PORT/localhost:8020/g" /opt/hdp_install_helper/configuration_files/core_hadoop/core-site.xml; \
 	sed -i -e "s/TODO-DFS-NAME-DIR/$(echo $DFS_NAME_DIR | sed -e "s/ /,/g" | sed -e "s/\//\\\\\//g")/g" /opt/hdp_install_helper/configuration_files/core_hadoop/hdfs-site.xml; \
 	sed -i -e "s/TODO-DFS-DATA-DIR/$(echo $DFS_DATA_DIR | sed -e "s/ /,/g" | sed -e "s/\//\\\\\//g")/g" /opt/hdp_install_helper/configuration_files/core_hadoop/hdfs-site.xml; \
@@ -138,20 +138,11 @@ RUN rm -r $HADOOP_CONF_DIR; \
 	chown -R $HDFS_USER:$HADOOP_GROUP $HADOOP_CONF_DIR/../; \
 	chmod -R 755 $HADOOP_CONF_DIR/../ 
 
+# Launch of HDFS namenode & datanode
 RUN /usr/hdp/current/hadoop-hdfs-namenode/../hadoop/bin/hdfs namenode -format; \
 	/usr/hdp/current/hadoop-hdfs-namenode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start namenode; \
 	/usr/hdp/current/hadoop-hdfs-datanode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start datanode; \
 	hadoop fs -mkdir /test; \
 	hadoop fs -ls / 
-
-
-
-
-#hdfs dfs -mkdir -p /user/hdfs
-#hdfs dfs -mkdir -p /hdp/apps/2.2.0.0-2041/mapreduce/
-#hdfs dfs -put /usr/hdp/current/hadoop-client/mapreduce.tar.gz /hdp/apps/2.2.0.0-2041/mapreduce/
-#hdfs dfs -chown -R $HDFS_USER:$HADOOP_GROU¨P /hdp
-#hdfs dfs -chmod -R 555 /hdp/apps/2.2.0.0-2041/mapreduce
-#hdfs dfs -chmod -R 444 /hdp/apps/2.2.0.0-2041/mapreduce/mapreduce.tar.gz
 
 
