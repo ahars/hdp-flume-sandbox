@@ -54,15 +54,6 @@ RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=acc
 # Configuration of the remote repos
 RUN wget -nv http://public-repo-1.hortonworks.com/HDP/centos6/2.x/GA/2.2.0.0/hdp.repo -O /etc/yum.repos.d/hdp.repo
 
-# Disable SELinux & IPTables
-RUN setenforce 0; \
-	chkconfig iptables off
-
-# Download companion files
-RUN mkdir -p /opt/hdp_install_helper
-RUN wget -qO- http://public-repo-1.hortonworks.com/HDP/tools/2.2.0.0/hdp_manual_install_rpm_helper_files-2.2.0.0.2041.tar.gz \
-	| tar zxvf - -C /opt/hdp_install_helper --strip 1
-
 # Install the Hadoop packages
 RUN yum -y install hadoop \
 	hadoop-hdfs \
@@ -78,8 +69,18 @@ RUN yum -y install hadoop \
 	hadooplzo \
 	hadooplzo-native \
 	hive-hcatalog \
+	mysql-connector-java* \
 	flume \
 	flume-agent
+
+# Download companion files
+RUN mkdir -p /opt/hdp_install_helper
+RUN wget -qO- http://public-repo-1.hortonworks.com/HDP/tools/2.2.0.0/hdp_manual_install_rpm_helper_files-2.2.0.0.2041.tar.gz \
+	| tar zxvf - -C /opt/hdp_install_helper --strip 1
+
+# Disable SELinux & IPTables
+RUN setenforce 0 ; \
+	chkconfig iptables off
 
 # Create the directories for Hadoop
 RUN mkdir -p $DFS_NAME_DIR \
@@ -143,13 +144,6 @@ RUN cp /etc/flume/conf/flume-env.sh.template /etc/flume/conf/flume-env.sh; \
 	echo >> /etc/flume/conf/flume-env.sh; \
 	echo 'JAVA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=4159 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Xms100m -Xmx4000m"' >> /etc/flume/conf/flume-env.sh
 
-# Launch HDFS namenode & datanode
-RUN /usr/hdp/current/hadoop-hdfs-namenode/../hadoop/bin/hdfs namenode -format; \
-	/usr/hdp/current/hadoop-hdfs-namenode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start namenode; \
-	/usr/hdp/current/hadoop-hdfs-datanode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start datanode; \
-	hadoop fs -mkdir /test; \
-	hadoop fs -ls / 
-
-# Launch Flume agent
-RUN /usr/hdp/current/flume-server/bin/flume-ng agent -c /etc/flume/conf -f /etc/flume/conf/ flume.conf -n agent 
+ENV REPO /opt/hdp-flume-sandbox/
+WORKDIR $REPO/scripts/
 
