@@ -3,39 +3,21 @@ MAINTAINER Antoine Hars <antoine.hars@gmail.com>
 
 # Environment variables for Hadoop
 ENV JAVA_HOME /usr/java/latest
-ENV HDFS_USER hdfs
-ENV YARN_USER yarn
-ENV MAPRED_USER mapred
-ENV HIVE_USER hive
-ENV WEBHCAT_USER hcat
-ENV HADOOP_GROUP hadoop
-ENV MAPRED_GROUP mapred
 ENV DFS_NAME_DIR /grid/hadoop/hdfs/nn /grid1/hadoop/hdfs/nn
 ENV DFS_DATA_DIR /grid/hadoop/hdfs/dn /grid1/hadoop/hdfs/dn /grid2/hadoop/hdfs/dn
 ENV FS_CHECKPOINT_DIR /grid/hadoop/hdfs/snn /grid1/hadoop/hdfs/snn /grid2/hadoop/hdfs/snn
-ENV HDFS_LOG_DIR /var/log/hadoop/$HDFS_USER
-ENV HDFS_PID_DIR /var/run/hadoop/$HDFS_USER
+ENV HDFS_LOG_DIR /var/log/hadoop/hdfs
+ENV HDFS_PID_DIR /var/run/hadoop/hdfs
 ENV HADOOP_CONF_DIR /etc/hadoop/conf
 ENV YARN_LOCAL_DIR /grid/hadoop/yarn/local /grid1/hadoop/yarn/local /grid2/hadoop/yarn/local
-ENV YARN_LOG_DIR /var/log/hadoop/$YARN_USER
+ENV YARN_LOG_DIR /var/log/hadoop/yarn
 ENV YARN_LOCAL_LOG_DIR /grid/hadoop/yarn/logs /grid1/hadoop/yarn/logs /grid2/hadoop/yarn/logs
-ENV YARN_PID_DIR /var/run/hadoop/$YARN_USER
-ENV MAPRED_LOG_DIR /var/log/hadoop/$MAPRED_USER
-ENV MAPRED_PID_DIR /var/run/hadoop/$MAPRED_USER
+ENV YARN_PID_DIR /var/run/hadoop/yarn
+ENV MAPRED_LOG_DIR /var/log/hadoop/mapred
+ENV MAPRED_PID_DIR /var/run/hadoop/mapred
 ENV HIVE_CONF_DIR /etc/hive/conf
 ENV HIVE_LOG_DIR /var/log/hive
 ENV HIVE_PID_DIR /var/run/hive
-ENV WEBHCAT_CONF_DIR /etc/hcatalog/conf/webhcat
-ENV WEBHCAT_LOG_DIR var/log/webhcat
-ENV WEBHCAT_PID_DIR /var/run/webhcatDOOP_GROUP
-
-RUN groupadd $HADOOP_GROUP; \
-	groupadd $MAPRED_GROUP; \
-	useradd -g $HADOOP_GROUP $HDFS_USER; \
-	useradd -g $HADOOP_GROUP $YARN_USER; \
-	useradd -g $HADOOP_GROUP -g $MAPRED_GROUP $MAPRED_USER; \
-	useradd -g $HADOOP_GROUP $HIVE_USER; \
-	useradd -g $HADOOP_GROUP $WEBHCAT_USER
 
 # environment preparation
 RUN yum -y update; \
@@ -104,18 +86,7 @@ RUN mkdir -p $DFS_NAME_DIR \
 		$YARN_PID_DIR \
 		$MAPRED_LOG_DIR \
 		$MAPRED_PID_DIR; \
-	chmod -R 750 $DFS_DATA_DIR; \
-	chown -R $HDFS_USER:$HADOOP_GROUP $DFS_NAME_DIR; \ 
-	chown -R $HDFS_USER:$HADOOP_GROUP $FS_CHECKPOINT_DIR; \
-	chown -R $HDFS_USER:$HADOOP_GROUP $DFS_DATA_DIR; \
-	chown -R $YARN_USER:$HADOOP_GROUP $YARN_LOCAL_DIR; \ 
-	chown -R $YARN_USER:$HADOOP_GROUP $YARN_LOCAL_LOG_DIR; \ 
-	chown -R $HDFS_USER:$HADOOP_GROUP $HDFS_LOG_DIR; \
-	chown -R $YARN_USER:$HADOOP_GROUP $YARN_LOG_DIR; \
-	chown -R $HDFS_USER:$HADOOP_GROUP $HDFS_PID_DIR; \
-	chown -R $YARN_USER:$HADOOP_GROUP $YARN_PID_DIR; \ 
-	chown -R $MAPRED_USER:$HADOOP_GROUP $MAPRED_LOG_DIR; \
-	chown -R $MAPRED_USER:$HADOOP_GROUP $MAPRED_PID_DIR 
+	chmod -R 750 $DFS_DATA_DIR
 
 RUN hdp-select set all 2.2.0.0-2041
 
@@ -136,7 +107,6 @@ RUN rm -r $HADOOP_CONF_DIR; \
 	mkdir -p $HADOOP_CONF_DIR; \
 	cp -R /opt/hdp_install_helper/configuration_files/* $HADOOP_CONF_DIR; \
 	cp $HADOOP_CONF_DIR/core_hadoop/core-site.xml $HADOOP_CONF_DIR/; \
-	chown -R $HDFS_USER:$HADOOP_GROUP $HADOOP_CONF_DIR/../; \
 	chmod -R 755 $HADOOP_CONF_DIR/../ 
 
 # Configuration of Flume
@@ -145,5 +115,5 @@ RUN cp /etc/flume/conf/flume-env.sh.template /etc/flume/conf/flume-env.sh; \
 	echo 'JAVA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=4159 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Xms100m -Xmx4000m"' >> /etc/flume/conf/flume-env.sh
 
 ENV REPO /opt/hdp-flume-sandbox/
-WORKDIR $REPO/scripts/
+WORKDIR $REPO
 
