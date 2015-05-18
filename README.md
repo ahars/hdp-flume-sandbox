@@ -10,6 +10,10 @@ Two ways to process logs with Apache Flume 1.5.2
 * Docker with hadoop file system
 ```
 ./run_flume_hadoop.sh
+```
+
+And inside the Docker image :
+```
 ./launch_hadoop.sh
 ./run_flume.sh "JOB_NUMBER"
 ```
