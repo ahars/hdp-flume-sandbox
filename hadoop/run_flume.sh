@@ -5,11 +5,6 @@ if [ $# -ne 1 ]; then
         exit 0
 fi
 
-# Launch HDFS namenode & datanode
-/usr/hdp/current/hadoop-hdfs-namenode/../hadoop/bin/hdfs namenode -format
-/usr/hdp/current/hadoop-hdfs-namenode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start namenode
-/usr/hdp/current/hadoop-hdfs-datanode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start datanode
-
 hadoop fs -rm -r /ACCEPTED 
 hadoop fs -rm -r /REJECTED
 hadoop fs -mkdir /ACCEPTED
@@ -27,3 +22,4 @@ echo
 echo REJECTED :
 hadoop fs -ls /REJECTED
 echo
+
