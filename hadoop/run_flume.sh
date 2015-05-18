@@ -5,7 +5,7 @@ if [ $# -ne 1 ]; then
         exit 0
 fi
 
-hadoop fs -rm -r /user/root/data/* 
+hadoop fs -rm -r -skipTrash /user/root/data/* 
 
 mv -v data/input/example.log.COMPLETED data/input/example.log
 
