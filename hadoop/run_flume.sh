@@ -5,10 +5,7 @@ if [ $# -ne 1 ]; then
         exit 0
 fi
 
-hadoop fs -rm -r /ACCEPTED 
-hadoop fs -rm -r /REJECTED
-hadoop fs -mkdir /ACCEPTED
-hadoop fs -mkdir /REJECTED
+hadoop fs -rm -r /user/root/data/* 
 
 mv -v data/input/example.log.COMPLETED data/input/example.log
 
@@ -17,9 +14,9 @@ flume-ng agent -n agent_$1 -c conf -f conf/flume_$1.conf -Dflume.root.logger=INF
 
 echo
 echo ACCEPTED :
-hadoop fs -ls /ACCEPTED
+hadoop fs -ls -R /user/root/data/ACCEPTED
 echo
 echo REJECTED :
-hadoop fs -ls /REJECTED
+hadoop fs -ls -R /user/root/data/REJECTED
 echo
 
