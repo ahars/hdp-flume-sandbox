@@ -16,11 +16,12 @@ echo
 echo ACCEPTED :
 hadoop fs -ls -R /user/root/data/ACCEPTED
 echo
-echo REJECTED :
-hadoop fs -ls -R /user/root/data/REJECTED
-echo
+#echo REJECTED :
+#hadoop fs -ls -R /user/root/data/REJECTED
+#echo
 
 # Launch Hive
-hive -f hive/data_ct.hql
-hive -e 'select count(*) from data ;
-	select * from data limit 5 ; '
+#hive -f hive/data_ct.hql
+#hive -e 'select count(*) from data ;
+#	select * from data limit 5 ; '
+
