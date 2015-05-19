@@ -24,7 +24,8 @@ RUN yum -y update; \
 	yum clean all 
 RUN yum -y install tar \
 	vim \
-	wget
+	wget \
+	maven
 
 # install Java 8
 RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u31-b13/jdk-8u31-linux-x64.rpm" -O /tmp/jdk-8-linux-x64.rpm; \
