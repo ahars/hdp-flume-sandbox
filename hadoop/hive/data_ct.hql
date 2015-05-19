@@ -17,8 +17,10 @@ create external table data (
 	lib_lists	string	comment '',
 	id_previous	string	comment '',
 	id_film		string	comment '',
-	id_serie	string	comment ''
+	id_serie	string	comment '',
+	mois_seq	string	comment '',
+	date_seq	string	comment ''
 ) comment 'data'
+partitionned by (mois_seq, date_seq)
 row format delimited fields terminated by '\;'
-stored as textfile
 location '/user/root/data/ACCEPTED/dest_1';
