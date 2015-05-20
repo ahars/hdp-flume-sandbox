@@ -3,3 +3,4 @@ data/
 derby.log
 .idea
 *.iml
+target/
