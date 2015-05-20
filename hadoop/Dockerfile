@@ -24,8 +24,7 @@ RUN yum -y update; \
 	yum clean all 
 RUN yum -y install tar \
 	vim \
-	wget \
-	maven
+	wget 
 
 # install Java 8
 RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u31-b13/jdk-8u31-linux-x64.rpm" -O /tmp/jdk-8-linux-x64.rpm; \
@@ -35,7 +34,8 @@ RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=acc
 	alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 200000
 
 # Configuration of the remote repos
-RUN wget -nv http://public-repo-1.hortonworks.com/HDP/centos6/2.x/GA/2.2.0.0/hdp.repo -O /etc/yum.repos.d/hdp.repo
+RUN wget -nv http://public-repo-1.hortonworks.com/HDP/centos6/2.x/GA/2.2.0.0/hdp.repo -O /etc/yum.repos.d/hdp.repo; \
+	wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
 
 # Install the Hadoop packages
 RUN yum -y install hadoop \
@@ -54,7 +54,8 @@ RUN yum -y install hadoop \
 	hive-hcatalog \
 	mysql-connector-java* \
 	flume \
-	flume-agent
+	flume-agent \
+	apache-maven
 
 # Download companion files
 RUN mkdir -p /opt/hdp_install_helper
