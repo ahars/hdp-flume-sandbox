@@ -19,14 +19,12 @@ fi
 flume-ng agent -n agent_$1 -c conf -f conf/flume_$1.conf -Dflume.root.logger=INFO,console
 
 echo
-echo ACCEPTED :
-hadoop fs -ls -R /user/root/data/ACCEPTED
+hadoop fs -ls -R /user/root/data/
 echo
 hadoop fs -cat /user/root/data/ACCEPTED/*
 echo
-#echo REJECTED :
-#hadoop fs -ls -R /user/root/data/REJECTED
-#echo
+hadoop fs -cat /user/root/data/REJECTED/*
+echo
 
 # Launch Hive
 hive -f hive/data_ct.hql
