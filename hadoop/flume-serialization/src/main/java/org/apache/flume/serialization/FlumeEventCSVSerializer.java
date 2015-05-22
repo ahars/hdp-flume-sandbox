@@ -102,12 +102,12 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             alimOrderIndexer(matcher);
 
-            Iterator t = orderIndexer.keySet().iterator();
+            Iterator it = orderIndexer.keySet().iterator();
 
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
+            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
@@ -120,9 +120,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(event.getHeaders().get(TimestampInterceptor.Constants.TIMESTAMP).getBytes(), '\n');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), '\n');
 
         } else {
             logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
@@ -136,12 +135,12 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             alimOrderIndexer(matcher);
 
-            Iterator t = orderIndexer.keySet().iterator();
+            Iterator it = orderIndexer.keySet().iterator();
 
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
+            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
@@ -154,9 +153,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(event.getHeaders().get(TimestampInterceptor.Constants.TIMESTAMP).getBytes(), '\n');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), '\n');
 
         } else {
             logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
@@ -170,12 +168,12 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             alimOrderIndexer(matcher);
 
-            Iterator t = orderIndexer.keySet().iterator();
+            Iterator it = orderIndexer.keySet().iterator();
 
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
+            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
@@ -188,9 +186,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(event.getHeaders().get(TimestampInterceptor.Constants.TIMESTAMP).getBytes(), '\n');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), '\n');
 
         } else {
             logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
@@ -204,12 +201,12 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             alimOrderIndexer(matcher);
 
-            Iterator t = orderIndexer.keySet().iterator();
+            Iterator it = orderIndexer.keySet().iterator();
 
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
+            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
@@ -222,8 +219,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
             writes(event.getHeaders().get(TimestampInterceptor.Constants.TIMESTAMP).getBytes(), '\n');
 
         } else {
@@ -238,12 +235,12 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             alimOrderIndexer(matcher);
 
-            Iterator t = orderIndexer.keySet().iterator();
+            Iterator it = orderIndexer.keySet().iterator();
 
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
+            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
@@ -256,9 +253,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(event.getHeaders().get(TimestampInterceptor.Constants.TIMESTAMP).getBytes(), '\n');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), '\n');
 
         } else {
             logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
@@ -272,12 +268,12 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             alimOrderIndexer(matcher);
 
-            Iterator t = orderIndexer.keySet().iterator();
+            Iterator it = orderIndexer.keySet().iterator();
 
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
+            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
@@ -290,9 +286,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(event.getHeaders().get(TimestampInterceptor.Constants.TIMESTAMP).getBytes(), '\n');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), '\n');
 
         } else {
             logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
@@ -306,12 +301,12 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             alimOrderIndexer(matcher);
 
-            Iterator t = orderIndexer.keySet().iterator();
+            Iterator it = orderIndexer.keySet().iterator();
 
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(t.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
+            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
@@ -324,9 +319,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
             writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(orderIndexer.get(t.next()).array(), ';');
-            writes(event.getHeaders().get(TimestampInterceptor.Constants.TIMESTAMP).getBytes(), '\n');
+            writes(orderIndexer.get(it.next()).array(), ';');
+            writes(orderIndexer.get(it.next()).array(), '\n');
 
         } else {
             logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
@@ -340,10 +334,14 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             alimOrderIndexer(matcher);
 
-            for(Integer key : orderIndexer.keySet())
-                writes(orderIndexer.get(key).array(), ';');
+            Iterator it = orderIndexer.keySet().iterator();
+            out.write(orderIndexer.get(it.next()).array());
 
-            writes(event.getHeaders().get(TimestampInterceptor.Constants.TIMESTAMP).getBytes(), '\n');
+            while(it.hasNext()) {
+                out.write(';');
+                out.write(orderIndexer.get(it.next()).array());
+            }
+            out.write('\n');
 
         } else {
             logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));

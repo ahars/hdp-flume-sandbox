@@ -17,8 +17,7 @@ create external table data (
 	cat_15	string,
 	cat_16	string,
 	cat_17	string,
-	cat_18	string,
-	timestamp string
+	cat_18	string
 ) 
 row format delimited fields terminated by '\;' 
 location '/user/root/data/ACCEPTED/';
