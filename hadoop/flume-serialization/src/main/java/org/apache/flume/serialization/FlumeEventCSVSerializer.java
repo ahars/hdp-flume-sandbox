@@ -71,7 +71,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                 writeAll(event);
                 break;
             case "1":
-                writeEvntCat_1(event);
+                processResult(event);
+                writeResult();
                 break;
             case "2":
                 processResult(event);
