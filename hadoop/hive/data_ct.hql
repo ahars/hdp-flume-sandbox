@@ -17,7 +17,10 @@ create external table data (
 	cat_15	string,
 	cat_16	string,
 	cat_17	string,
-	cat_18	string
+	cat_18	string,
+	cat_19	string,
+	cat_20	string,
+	cat_21	string
 ) 
 row format delimited fields terminated by '\;' 
 location '/user/root/data/ACCEPTED/';

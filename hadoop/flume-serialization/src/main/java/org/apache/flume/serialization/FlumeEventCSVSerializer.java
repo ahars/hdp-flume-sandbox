@@ -14,9 +14,7 @@ import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +41,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     private final OutputStream out;
     private Matcher matcher;
     private Map<Integer, ByteBuffer > orderIndexer;
+    private Map<String, ByteBuffer > result;
 
     public FlumeEventCSVSerializer(OutputStream out, Context context) {
         this.format = context.getString(FORMAT, DEFAULT_FORMAT);
@@ -50,6 +49,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         this.regexOrder = context.getString(REGEX_ORDER, DEFAULT_ORDER).split(" ");
         this.out = out;
         this.orderIndexer = new HashMap<Integer, ByteBuffer>();
+        this.result = new HashMap<String, ByteBuffer>();
         this.category = context.getString(CATEGORY, DEFAULT_CATEGORY);
     }
 
@@ -74,10 +74,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                 writeEvntCat_1(event);
                 break;
             case "2":
-                writeEvntCat_2(event);
-                break;
-            case "3":
-                writeEvntCat_3(event);
+                processResult(event);
+                writeResult();
                 break;
             default:
                 writeAll(event);
@@ -96,205 +94,6 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     }
 
     private void writeEvntCat_1(Event event) throws IOException {
-
-        matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
-        if (matcher.find()) {
-
-            alimOrderIndexer(matcher);
-
-            Iterator it = orderIndexer.keySet().iterator();
-
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), '\n');
-
-        } else {
-            logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
-        }
-    }
-
-    private void writeEvntCat_2(Event event) throws IOException {
-
-        matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
-        if (matcher.find()) {
-
-            alimOrderIndexer(matcher);
-
-            Iterator it = orderIndexer.keySet().iterator();
-
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), '\n');
-
-        } else {
-            logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
-        }
-    }
-
-    private void writeEvntCat_3(Event event) throws IOException {
-
-        matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
-        if (matcher.find()) {
-
-            alimOrderIndexer(matcher);
-
-            Iterator it = orderIndexer.keySet().iterator();
-
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), '\n');
-
-        } else {
-            logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
-        }
-    }
-
-    private void writeEvntCat_4(Event event) throws IOException {
-
-        matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
-        if (matcher.find()) {
-
-            alimOrderIndexer(matcher);
-
-            Iterator it = orderIndexer.keySet().iterator();
-
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(event.getHeaders().get(TimestampInterceptor.Constants.TIMESTAMP).getBytes(), '\n');
-
-        } else {
-            logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
-        }
-    }
-
-    private void writeEvntCat_5(Event event) throws IOException {
-
-        matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
-        if (matcher.find()) {
-
-            alimOrderIndexer(matcher);
-
-            Iterator it = orderIndexer.keySet().iterator();
-
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), '\n');
-
-        } else {
-            logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
-        }
-    }
-
-    private void writeEvntCat_6(Event event) throws IOException {
-
-        matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
-        if (matcher.find()) {
-
-            alimOrderIndexer(matcher);
-
-            Iterator it = orderIndexer.keySet().iterator();
-
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), '\n');
-
-        } else {
-            logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
-        }
-    }
-
-    private void writeEvntCat_7(Event event) throws IOException {
 
         matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
         if (matcher.find()) {
@@ -346,6 +145,92 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         } else {
             logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
         }
+    }
+
+    private void processResult(Event event) throws IOException {
+
+        result.clear();
+
+        matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
+        if (matcher.find()) {
+
+            alimOrderIndexer(matcher);
+
+            Object[] it = orderIndexer.keySet().toArray();
+            int i = 0;
+
+            for(Integer key : orderIndexer.keySet()) {
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "user".getBytes())) {
+                    String tmp1 = new String(orderIndexer.get(it[i + 1]).array(), "UTF-8");
+                    String[] tmp2;
+
+                    if (tmp1.contains(":"))
+                        tmp2 = tmp1.split(":");
+                    else
+                        tmp2 = tmp1.split("%");
+
+                    result.put("cat_5", ByteBuffer.wrap(tmp2[1].getBytes()));
+                    result.put("cat_6", ByteBuffer.wrap(tmp2[2].getBytes()));
+                }
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "details".getBytes()))
+                    result.put("cat_9", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                if (new String(orderIndexer.get(key).array()).contains("_movie_"))
+                    result.put("cat_17", ByteBuffer.wrap(orderIndexer.get(key).array()));
+
+                if (new String(orderIndexer.get(key).array()).contains("_cat_"))
+                    result.put("cat_18", ByteBuffer.wrap(orderIndexer.get(key).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "media".getBytes())) {
+                    String tmp1 = new String(orderIndexer.get(it[i + 1]).array(), "UTF-8");
+                    tmp1 = tmp1.replace("<", "");
+                    tmp1 = tmp1.replace(">", "");
+                    result.put("cat_7", ByteBuffer.wrap(tmp1.getBytes()));
+                }
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "universe".getBytes()))
+                    result.put("cat_10", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "catalogs".getBytes()))
+                    result.put("cat_8", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                i++;
+            }
+
+            result.put("cat_1", ByteBuffer.wrap(converterDateTime(new String(orderIndexer.get(1).array(), "UTF-8")).getBytes()));
+            result.put("cat_2", ByteBuffer.wrap(converterDate(new String(orderIndexer.get(2).array(), "UTF-8")).getBytes()));
+            result.put("cat_3", ByteBuffer.wrap(orderIndexer.get(4).array()));
+            result.put("cat_4", ByteBuffer.wrap(orderIndexer.get(3).array()));
+            result.put("cat_20", ByteBuffer.wrap(orderIndexer.get(it[i - 2]).array()));
+            result.put("cat_21", ByteBuffer.wrap(orderIndexer.get(it[i - 1]).array()));
+        }
+    }
+
+    private void writeResult() throws IOException {
+
+        writes(result.getOrDefault("cat_1", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_2", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_3", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_4", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_5", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_6", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_7", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_8", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_9", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_10", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_11", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_12", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_13", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_14", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_15", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_16", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_17", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_18", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_19", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_20", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_21", ByteBuffer.wrap("NULL".getBytes())).array(), '\n');
     }
 
     private void writes(byte[] b, char pv) throws IOException {
