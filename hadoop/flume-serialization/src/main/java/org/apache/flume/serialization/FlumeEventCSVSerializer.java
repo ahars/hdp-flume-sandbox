@@ -78,6 +78,10 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                 processResult(event);
                 writeResult();
                 break;
+            case "3":
+                processResult(event);
+                writeResult();
+                break;
             default:
                 writeAll(event);
                 break;
@@ -91,39 +95,6 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         for (int i = 0, count = totalGroups; i < count; i++) {
             groupIndex = i + 1;
             orderIndexer.put(Integer.valueOf(regexOrder[i]), ByteBuffer.wrap(matcher.group(groupIndex).getBytes()));
-        }
-    }
-
-    private void writeEvntCat_1(Event event) throws IOException {
-
-        matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
-        if (matcher.find()) {
-
-            alimOrderIndexer(matcher);
-
-            Iterator it = orderIndexer.keySet().iterator();
-
-            writes(converterDateTime(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(converterDate(IOUtils.toString(orderIndexer.get(it.next()).array(), "UTF-8")).getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(("NULL").getBytes(), ';');
-            writes(orderIndexer.get(it.next()).array(), ';');
-            writes(orderIndexer.get(it.next()).array(), '\n');
-
-        } else {
-            logger.warn("Error in the event processing : " + IOUtils.toString(event.getBody()));
         }
     }
 
@@ -196,6 +167,18 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
                 if (Arrays.equals(orderIndexer.get(key).array(), "catalogs".getBytes()))
                     result.put("cat_8", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "start".getBytes()))
+                    result.put("cat_11", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "end".getBytes()))
+                    result.put("cat_12", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "flat".getBytes()))
+                    result.put("cat_14", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "userId".getBytes()))
+                    result.put("cat_5", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
 
                 i++;
             }
