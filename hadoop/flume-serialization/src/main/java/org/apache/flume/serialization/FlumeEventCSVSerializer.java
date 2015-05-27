@@ -4,7 +4,6 @@ import com.google.common.base.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
-import org.apache.flume.interceptor.TimestampInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,9 +144,17 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                     if (tmp1.contains("&")) {
                         String[] tmp2 = tmp1.split("&");
                         result.put("cat_7", ByteBuffer.wrap(tmp2[0].getBytes()));
-                        tmp2 = tmp2[1].split("=");
-                        result.put("cat_8", ByteBuffer.wrap(tmp2[1].getBytes()));
 
+                        int j;
+                        for (j = 1 ; j < tmp2.length; j++) {
+                            String[] tmp3 = tmp2[j].split("=");
+                            if (tmp3[0].equals("catalogs"))
+                                result.put("cat_8", ByteBuffer.wrap(tmp3[1].getBytes()));
+                            if (tmp3[0].equals("details"))
+                                result.put("cat_9", ByteBuffer.wrap(tmp3[1].getBytes()));
+                            if (tmp3[0].equals("limit"))
+                                result.put("cat_13", ByteBuffer.wrap(tmp3[1].getBytes()));
+                        }
                     } else
                         result.put("cat_7", ByteBuffer.wrap(tmp1.getBytes()));
                 }
@@ -192,8 +199,11 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
                 }
 
-                if (new String(orderIndexer.get(key).array()).contains("_movie_"))
-                    result.put("cat_17", ByteBuffer.wrap(orderIndexer.get(key).array()));
+                if (new String(orderIndexer.get(key).array()).contains("_movie_")) {
+                    String tmp1 = new String(orderIndexer.get(key).array());
+                    tmp1 = tmp1.replace("?", "");
+                    result.put("cat_17", ByteBuffer.wrap(tmp1.getBytes()));
+                }
 
                 if (new String(orderIndexer.get(key).array()).contains("_cat_"))
                     result.put("cat_18", ByteBuffer.wrap(orderIndexer.get(key).array()));
@@ -211,7 +221,9 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             result.put("cat_4", ByteBuffer.wrap(orderIndexer.get(3).array()));
             result.put("cat_20", ByteBuffer.wrap(orderIndexer.get(it[i - 2]).array()));
-            result.put("cat_21", ByteBuffer.wrap(orderIndexer.get(it[i - 1]).array()));
+
+            if (!Arrays.equals(orderIndexer.get(it[i - 1]).array(), "-".getBytes()))
+                result.put("cat_21", ByteBuffer.wrap(orderIndexer.get(it[i - 1]).array()));
         }
     }
 
