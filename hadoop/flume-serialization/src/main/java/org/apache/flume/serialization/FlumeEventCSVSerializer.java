@@ -148,7 +148,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                         int j;
                         for (j = 1 ; j < tmp2.length; j++) {
                             String[] tmp3 = tmp2[j].split("=");
-                            
+
                             if (tmp3[0].equals("catalogs"))
                                 result.put("cat_8", ByteBuffer.wrap(tmp3[1].getBytes()));
                             else if (tmp3[0].equals("details"))
@@ -243,8 +243,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             result.put("cat_1", ByteBuffer.wrap(converterDateTime(new String(orderIndexer.get(1).array(), "UTF-8")).getBytes()));
             result.put("cat_2", ByteBuffer.wrap(converterDate(new String(orderIndexer.get(2).array(), "UTF-8")).getBytes()));
-            if (category.equals("4") ||
-                    category.equals("5"))
+            if (category.equals("4") || category.equals("5") || category.equals("7") || category.equals("8") ||
+                    category.equals("9") || category.equals("10") || category.equals("11"))
                 result.put("cat_3", ByteBuffer.wrap(orderIndexer.get(6).array()));
             else
                 result.put("cat_3", ByteBuffer.wrap(orderIndexer.get(4).array()));
