@@ -86,6 +86,10 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                 processResult(event);
                 writeResult();
                 break;
+            case "5":
+                processResult(event);
+                writeResult();
+                break;
             default:
                 writeAll(event);
                 break;
@@ -192,8 +196,21 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
                 if (Arrays.equals(orderIndexer.get(key).array(), "lists".getBytes())) {
                     String tmp1 = new String(orderIndexer.get(it[i + 1]).array(), "UTF-8");
-                    tmp1 = tmp1.replace("%", ",");
-                    result.put("cat_15", ByteBuffer.wrap(tmp1.getBytes()));
+
+                    if (tmp1.contains("&")) {
+                        String[] tmp2 = tmp1.split("&");
+                        tmp2[0] = tmp2[0].replace("%", ",");
+                        result.put("cat_15", ByteBuffer.wrap(tmp2[0].getBytes()));
+                        tmp2 = tmp2[1].split("=");
+                        tmp2[1] = tmp2[1].replace("<", "");
+                        tmp2[1] = tmp2[1].replace(">", "");
+                        result.put("cat_7", ByteBuffer.wrap(tmp2[1].getBytes()));
+
+                    } else {
+                        tmp1 = tmp1.replace("%", ",");
+                        result.put("cat_15", ByteBuffer.wrap(tmp1.getBytes()));
+                    }
+
                 }
 
                 if (new String(orderIndexer.get(key).array()).contains("_movie_"))
@@ -207,7 +224,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             result.put("cat_1", ByteBuffer.wrap(converterDateTime(new String(orderIndexer.get(1).array(), "UTF-8")).getBytes()));
             result.put("cat_2", ByteBuffer.wrap(converterDate(new String(orderIndexer.get(2).array(), "UTF-8")).getBytes()));
-            if (category.equals("4"))
+            if (category.equals("4") ||
+                    category.equals("5"))
                 result.put("cat_3", ByteBuffer.wrap(orderIndexer.get(6).array()));
             else
                 result.put("cat_3", ByteBuffer.wrap(orderIndexer.get(4).array()));
