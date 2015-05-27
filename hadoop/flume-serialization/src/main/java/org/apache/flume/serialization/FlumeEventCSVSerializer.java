@@ -148,12 +148,15 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                         int j;
                         for (j = 1 ; j < tmp2.length; j++) {
                             String[] tmp3 = tmp2[j].split("=");
+                            
                             if (tmp3[0].equals("catalogs"))
                                 result.put("cat_8", ByteBuffer.wrap(tmp3[1].getBytes()));
-                            if (tmp3[0].equals("details"))
+                            else if (tmp3[0].equals("details"))
                                 result.put("cat_9", ByteBuffer.wrap(tmp3[1].getBytes()));
-                            if (tmp3[0].equals("limit"))
+                            else if (tmp3[0].equals("limit"))
                                 result.put("cat_13", ByteBuffer.wrap(tmp3[1].getBytes()));
+                            else if (tmp3[0].equals("rating"))
+                                result.put("cat_19", ByteBuffer.wrap(tmp3[1].getBytes()));
                         }
                     } else
                         result.put("cat_7", ByteBuffer.wrap(tmp1.getBytes()));
@@ -207,6 +210,33 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
                 if (new String(orderIndexer.get(key).array()).contains("_cat_"))
                     result.put("cat_18", ByteBuffer.wrap(orderIndexer.get(key).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "rating".getBytes())) {
+                    String tmp1 = new String(orderIndexer.get(it[i + 1]).array(), "UTF-8");
+
+                    if (tmp1.contains("&")) {
+                        String[] tmp2 = tmp1.split("&");
+                        result.put("cat_19", ByteBuffer.wrap(tmp2[0].getBytes()));
+
+                        int j;
+                        for (j = 1; j < tmp2.length; j++) {
+                            String[] tmp3 = tmp2[j].split("=");
+
+                            if (tmp3[0].equals("media")) {
+                                tmp3[1] = tmp3[1].replace("<", "");
+                                tmp3[1] = tmp3[1].replace(">", "");
+                                result.put("cat_7", ByteBuffer.wrap(tmp3[1].getBytes()));
+                            } else if (tmp3[0].equals("catalogs"))
+                                result.put("cat_8", ByteBuffer.wrap(tmp3[1].getBytes()));
+                            else if (tmp3[0].equals("details"))
+                                result.put("cat_9", ByteBuffer.wrap(tmp3[1].getBytes()));
+                            else if (tmp3[0].equals("limit"))
+                                result.put("cat_13", ByteBuffer.wrap(tmp3[1].getBytes()));
+
+                        }
+                    } else
+                        result.put("cat_19", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+                }
 
                 i++;
             }
