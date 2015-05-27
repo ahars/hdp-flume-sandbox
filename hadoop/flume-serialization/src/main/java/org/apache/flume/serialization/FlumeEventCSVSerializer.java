@@ -82,6 +82,10 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                 processResult(event);
                 writeResult();
                 break;
+            case "4":
+                processResult(event);
+                writeResult();
+                break;
             default:
                 writeAll(event);
                 break;
@@ -133,7 +137,11 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             for(Integer key : orderIndexer.keySet()) {
 
-                if (Arrays.equals(orderIndexer.get(key).array(), "user".getBytes())) {
+                if (Arrays.equals(orderIndexer.get(key).array(), "userId".getBytes()))
+                    result.put("cat_5", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "user".getBytes()) ||
+                        Arrays.equals(orderIndexer.get(key).array(), "users".getBytes())) {
                     String tmp1 = new String(orderIndexer.get(it[i + 1]).array(), "UTF-8");
                     String[] tmp2;
 
@@ -146,27 +154,29 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                     result.put("cat_6", ByteBuffer.wrap(tmp2[2].getBytes()));
                 }
 
-                if (Arrays.equals(orderIndexer.get(key).array(), "details".getBytes()))
-                    result.put("cat_9", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
-
-                if (new String(orderIndexer.get(key).array()).contains("_movie_"))
-                    result.put("cat_17", ByteBuffer.wrap(orderIndexer.get(key).array()));
-
-                if (new String(orderIndexer.get(key).array()).contains("_cat_"))
-                    result.put("cat_18", ByteBuffer.wrap(orderIndexer.get(key).array()));
-
                 if (Arrays.equals(orderIndexer.get(key).array(), "media".getBytes())) {
                     String tmp1 = new String(orderIndexer.get(it[i + 1]).array(), "UTF-8");
                     tmp1 = tmp1.replace("<", "");
                     tmp1 = tmp1.replace(">", "");
-                    result.put("cat_7", ByteBuffer.wrap(tmp1.getBytes()));
-                }
 
-                if (Arrays.equals(orderIndexer.get(key).array(), "universe".getBytes()))
-                    result.put("cat_10", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+                    if (tmp1.contains("&")) {
+                        String[] tmp2 = tmp1.split("&");
+                        result.put("cat_7", ByteBuffer.wrap(tmp2[0].getBytes()));
+                        tmp2 = tmp2[1].split("=");
+                        result.put("cat_8", ByteBuffer.wrap(tmp2[1].getBytes()));
+
+                    } else
+                        result.put("cat_7", ByteBuffer.wrap(tmp1.getBytes()));
+                }
 
                 if (Arrays.equals(orderIndexer.get(key).array(), "catalogs".getBytes()))
                     result.put("cat_8", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "details".getBytes()))
+                    result.put("cat_9", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
+                if (Arrays.equals(orderIndexer.get(key).array(), "universe".getBytes()))
+                    result.put("cat_10", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
 
                 if (Arrays.equals(orderIndexer.get(key).array(), "start".getBytes()))
                     result.put("cat_11", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
@@ -174,18 +184,34 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                 if (Arrays.equals(orderIndexer.get(key).array(), "end".getBytes()))
                     result.put("cat_12", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
 
+                if (Arrays.equals(orderIndexer.get(key).array(), "limit".getBytes()))
+                    result.put("cat_13", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+
                 if (Arrays.equals(orderIndexer.get(key).array(), "flat".getBytes()))
                     result.put("cat_14", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
 
-                if (Arrays.equals(orderIndexer.get(key).array(), "userId".getBytes()))
-                    result.put("cat_5", ByteBuffer.wrap(orderIndexer.get(it[i + 1]).array()));
+                if (Arrays.equals(orderIndexer.get(key).array(), "lists".getBytes())) {
+                    String tmp1 = new String(orderIndexer.get(it[i + 1]).array(), "UTF-8");
+                    tmp1 = tmp1.replace("%", ",");
+                    result.put("cat_15", ByteBuffer.wrap(tmp1.getBytes()));
+                }
+
+                if (new String(orderIndexer.get(key).array()).contains("_movie_"))
+                    result.put("cat_17", ByteBuffer.wrap(orderIndexer.get(key).array()));
+
+                if (new String(orderIndexer.get(key).array()).contains("_cat_"))
+                    result.put("cat_18", ByteBuffer.wrap(orderIndexer.get(key).array()));
 
                 i++;
             }
 
             result.put("cat_1", ByteBuffer.wrap(converterDateTime(new String(orderIndexer.get(1).array(), "UTF-8")).getBytes()));
             result.put("cat_2", ByteBuffer.wrap(converterDate(new String(orderIndexer.get(2).array(), "UTF-8")).getBytes()));
-            result.put("cat_3", ByteBuffer.wrap(orderIndexer.get(4).array()));
+            if (category.equals("4"))
+                result.put("cat_3", ByteBuffer.wrap(orderIndexer.get(6).array()));
+            else
+                result.put("cat_3", ByteBuffer.wrap(orderIndexer.get(4).array()));
+
             result.put("cat_4", ByteBuffer.wrap(orderIndexer.get(3).array()));
             result.put("cat_20", ByteBuffer.wrap(orderIndexer.get(it[i - 2]).array()));
             result.put("cat_21", ByteBuffer.wrap(orderIndexer.get(it[i - 1]).array()));
