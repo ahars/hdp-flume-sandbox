@@ -66,33 +66,12 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     @Override
     public void write(Event event) throws IOException {
 
-        switch (category) {
-            case "0" :
-                writeAll(event);
-                break;
-            case "1":
-                processResult(event);
-                writeResult();
-                break;
-            case "2":
-                processResult(event);
-                writeResult();
-                break;
-            case "3":
-                processResult(event);
-                writeResult();
-                break;
-            case "4":
-                processResult(event);
-                writeResult();
-                break;
-            case "5":
-                processResult(event);
-                writeResult();
-                break;
-            default:
-                writeAll(event);
-                break;
+        Integer cat = Integer.parseInt(category);
+        if (cat < 1 || cat > 11)
+            writeAll(event);
+        else {
+            processResult(event);
+            writeResult();
         }
     }
 
