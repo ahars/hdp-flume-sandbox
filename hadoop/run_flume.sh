@@ -16,7 +16,12 @@ if [ $1 -ge 5 ]; then
 fi
 
 # Launch Flume agent
-flume-ng agent -n agent_$1 -c conf -f conf/flume_$1.conf -Dflume.root.logger=INFO,console
+if [ $1 -ge 15 ]; then
+        flume-ng agent -n agent_$1_2 -c conf -f conf/flume_$1.conf -Dflume.root.logger=INFO,console & \
+        flume-ng agent -n agent_$1_1 -c conf -f conf/flume_$1.conf -Dflume.root.logger=INFO,console
+else
+	flume-ng agent -n agent_$1 -c conf -f conf/flume_$1.conf -Dflume.root.logger=INFO,console
+fi
 
 echo
 hadoop fs -ls -R /user/root/data/
