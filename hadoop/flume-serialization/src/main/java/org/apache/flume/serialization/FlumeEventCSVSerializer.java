@@ -28,15 +28,18 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     public static final String REGEX = "regex";
     public static final String REGEX_ORDER = "regexorder";
     public static final String CATEGORY = "category";
+    public static final String IFERROR = "iferror";
 
     // Default values
     private final String DEFAULT_FORMAT = "CSV";
     private final String DEFAULT_REGEX = "(.*)";
     private final String DEFAULT_ORDER = "1";
     private final String DEFAULT_CATEGORY = "0";
+    private final String DEFAULT_IFERROR = "error.csv";
 
     private final String format;
     private final String category;
+    private final String iferror;
     private final Pattern regex;
     private final Pattern default_regex;
     private final String[] regexOrder;
@@ -45,26 +48,46 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     private Map<Integer, ByteBuffer > orderIndexer;
     private Map<String, ByteBuffer > result;
 
+    /**
+     * Constructor of the FlumeEventCSVSerializer
+     * @param out output stream
+     * @param context flume context given
+     */
     public FlumeEventCSVSerializer(OutputStream out, Context context) {
         this.format = context.getString(FORMAT, DEFAULT_FORMAT);
         this.regex = Pattern.compile(context.getString(REGEX, DEFAULT_REGEX));
+        this.default_regex = Pattern.compile(DEFAULT_REGEX);
         this.regexOrder = context.getString(REGEX_ORDER, DEFAULT_ORDER).split(" ");
         this.out = out;
         this.orderIndexer = new HashMap<Integer, ByteBuffer>();
         this.result = new HashMap<String, ByteBuffer>();
         this.category = context.getString(CATEGORY, DEFAULT_CATEGORY);
+        this.iferror = context.getString(IFERROR, DEFAULT_IFERROR);
     }
 
+    /**
+     * Instruction to execute after a creation of the Serializer
+     * @throws IOException
+     */
     @Override
     public void afterCreate() throws IOException {
 
     }
 
+    /**
+     * Instructions to execute after a reopening
+     * @throws IOException
+     */
     @Override
     public void afterReopen() throws IOException {
 
     }
 
+    /**
+     * Write the different elements of the log in the output strem
+     * @param event event to process
+     * @throws IOException
+     */
     @Override
     public void write(Event event) throws IOException {
 
@@ -76,6 +99,10 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         }
     }
 
+    /**
+     * Collect of the element of the given log
+     * @param matcher the matcher used to get elements from the given log
+     */
     private void alimOrderIndexer(Matcher matcher) {
 
         int groupIndex = 0;
@@ -86,6 +113,11 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         }
     }
 
+    /**
+     * Default Core of the Serializer
+     * @param event event to serialize
+     * @throws IOException
+     */
     private void writeAll(Event event) throws IOException {
 
         matcher = regex.matcher(new String(event.getBody(), Charsets.UTF_8));
@@ -107,6 +139,11 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         }
     }
 
+    /**
+     * Core of the Serializer
+     * @param event event to serialize
+     * @throws IOException
+     */
     private void processResult(Event event) throws IOException {
 
         result.clear();
@@ -256,9 +293,28 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             if (!Arrays.equals(orderIndexer.get(it[i - 1]).array(), "-".getBytes()))
                 result.put("cat_21", ByteBuffer.wrap(orderIndexer.get(it[i - 1]).array()));
+
+            writeResult();
+        } else {
+            matcher = default_regex.matcher(new String(event.getBody(), Charsets.UTF_8));
+            if (matcher.find()) {
+                PrintWriter file = new PrintWriter(new BufferedWriter(new FileWriter(iferror, true)));
+                alimOrderIndexer(matcher);
+
+                Iterator it = orderIndexer.keySet().iterator();
+                file.println(new String(orderIndexer.get(it.next()).array(), "UTF-8"));
+                file.close();
+
+            } else {
+                logger.warn("ERROR on parsing log : " + new String(event.getBody(), Charsets.UTF_8));
+            }
         }
     }
 
+    /**
+     * Write the values collected or NULL to the result with ponctuation
+     * @throws IOException
+     */
     private void writeResult() throws IOException {
 
         writes(result.getOrDefault("cat_1", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
@@ -285,27 +341,46 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     }
 
     /**
+     * simplification for adding values to the result with ponctuation
+     * @param b value to add to the result
+     * @param pv char to add at the end of the first parameter like ';' or '\n'
+     * @throws IOException
+     */
     private void writes(byte[] b, char pv) throws IOException {
         out.write(b);
         out.write(pv);
     }
 
+    /**
+     * Instructions to execute when flushing
+     * @throws IOException
+     */
     @Override
     public void flush() throws IOException {
 
     }
 
+    /**
+     * Instructions to execute at the end of the Serializing
+     * @throws IOException
+     */
     @Override
     public void beforeClose() throws IOException {
 
     }
 
     /**
+     * Support of the reopening
+     * @return true
+     */
     @Override
     public boolean supportsReopen() {
         return true;
     }
 
+    /**
+     * Static class to build the Serializer
+     */
     public static class Builder implements EventSerializer.Builder {
         @Override
         public EventSerializer build(Context context, OutputStream out) {
@@ -314,6 +389,11 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         }
     }
 
+    /**
+     * Converter of date from 'dd/MMM/yyyy' to 'yyyy-MM-dd'
+     * @param st the date 'dd/MMM/yyyy' to convert
+     * @return the date with the format 'yyyy-MM-dd'
+     */
     private String converterDate(String st) {
 
         DateFormat df1 = new SimpleDateFormat("dd/MMM/yyyy");
@@ -327,6 +407,11 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         }
     }
 
+    /**
+     * Converter of date from 'dd/MMM/yyyy:HH:mm:ss ZZZ' to 'yyyy-MM-dd HH:mm:ss.ZZZ'
+     * @param st the date 'dd/MMM/yyyy:HH:mm:ss ZZZ' to convert
+     * @return the date with the format 'yyyy-MM-dd HH:mm:ss.ZZZ'
+     */
     private String converterDateTime(String st) {
 
         String[] s = st.split(" ");
