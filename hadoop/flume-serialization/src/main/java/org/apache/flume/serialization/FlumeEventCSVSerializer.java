@@ -7,8 +7,7 @@ import org.apache.flume.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -17,6 +16,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Serializer for Flume event from logs
+ */
 public class FlumeEventCSVSerializer implements EventSerializer {
 
     private final static Logger logger = LoggerFactory.getLogger(FlumeEventCSVSerializer.class);
@@ -36,6 +38,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     private final String format;
     private final String category;
     private final Pattern regex;
+    private final Pattern default_regex;
     private final String[] regexOrder;
     private final OutputStream out;
     private Matcher matcher;
@@ -70,7 +73,6 @@ public class FlumeEventCSVSerializer implements EventSerializer {
             writeAll(event);
         else {
             processResult(event);
-            writeResult();
         }
     }
 
@@ -282,6 +284,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         writes(result.getOrDefault("cat_21", ByteBuffer.wrap("NULL".getBytes())).array(), '\n');
     }
 
+    /**
     private void writes(byte[] b, char pv) throws IOException {
         out.write(b);
         out.write(pv);
@@ -297,6 +300,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
     }
 
+    /**
     @Override
     public boolean supportsReopen() {
         return true;
