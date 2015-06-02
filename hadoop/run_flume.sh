@@ -17,7 +17,7 @@ if [ $1 -ge 5 ]; then
 fi
 
 # Launch Flume agent
-if [ $1 -ge 15 ]; then
+if [ $1 -eq 15 ]; then
 	flume-ng agent -n agent_$1_2 -c conf -f conf/flume_$1.conf -Dflume.root.logger=INFO,console & \
 	flume-ng agent -n agent_$1_1 -c conf -f conf/flume_$1.conf -Dflume.root.logger=INFO,console
 else
