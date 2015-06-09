@@ -21,7 +21,11 @@ create external table data (
 	cat_19	string,
 	cat_20	string,
 	cat_21	string
-) 
+)
+partitioned by (
+	mois_data string,
+	date_data string
+)
 row format delimited fields terminated by '\;' 
 location '/user/root/data/ACCEPTED/';
 
