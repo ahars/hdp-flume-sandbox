@@ -3,6 +3,8 @@ package org.apache.flume.serialization;
 import com.google.common.base.Charsets;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +32,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     // Default values
     private final String DEFAULT_REGEX = "(.*)";
     private final String DEFAULT_PATHERROR = "/";
-    private final String DEFAULT_FILEERROR = "error.csv";
+    private final String DEFAULT_FILEERROR = "error-uuid.csv";
 
     private final String fileError;
     private final String pathError;
@@ -43,6 +45,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     private Map<String, ByteBuffer > result;
     private final SimpleDateFormat ymd;
     private final SimpleDateFormat ym;
+    private FileSystem hdfs;
 
     /**
      * Constructor of the FlumeEventCSVSerializer
@@ -59,6 +62,12 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         this.pathError = context.getString(PATHERROR, DEFAULT_PATHERROR);
         this.ymd = new SimpleDateFormat("yyyyMMdd");
         this.ym = new SimpleDateFormat("yyyyMM");
+
+        try {
+            this.hdfs = FileSystem.get(new Configuration());
+        } catch (IOException e) {
+            logger.info("problem on hdfs error : ", e);
+        }
     }
 
     /**
@@ -184,18 +193,20 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             if (matcher.find()) {
 
+                alimOrderIndexer(matcher);
+
                 String error = pathError + fileError;
                 error = error.replace("yyyyMMdd", ymd.format(new java.util.Date(System.currentTimeMillis())));
                 error = error.replace("yyyyMM", ym.format(new java.util.Date(System.currentTimeMillis())));
+                error = error.replace("uuid", UUID.randomUUID().toString());
 
                 // Store them in HDFS
-                PrintWriter file = new PrintWriter(new BufferedWriter(new FileWriter(error, true)));
+                Path iferror = new Path(error);
 
+                FSDataOutputStream fsDataOutputStream = hdfs.create(iferror, false);
 
-                alimOrderIndexer(matcher);
-
-                file.println(new String(input1[0].array(), "UTF-8"));
-                file.close();
+                fsDataOutputStream.write(input1[0].array());
+                fsDataOutputStream.close();
 
             } else {
                 logger.warn("ERROR on parsing log : " + new String(event.getBody(), Charsets.UTF_8));
