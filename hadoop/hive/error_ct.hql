@@ -1,8 +1,7 @@
 drop table if exists error;
 create external table error ( 
 	cat_1	string, 
-	cat_2	string, 
-	cat_3	string
+	cat_2	string 
 )
 partitioned by (
 	mois_error string,

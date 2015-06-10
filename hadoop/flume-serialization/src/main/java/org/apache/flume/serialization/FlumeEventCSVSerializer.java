@@ -32,19 +32,20 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     // Default values
     private final String DEFAULT_REGEX = "(.*)";
     private final String DEFAULT_PATHERROR = "/";
-    private final String DEFAULT_FILEERROR = "error-uuid.csv";
+    private final String DEFAULT_FILEERROR = "error.uuid.csv";
 
     private final String fileError;
     private final String pathError;
     private final Pattern regex;
     private final Pattern default_regex;
     private final OutputStream out;
+    private final SimpleDateFormat ymd;
+    private final SimpleDateFormat ym;
+
     private Matcher matcher;
     private ByteBuffer[] input1;
     private Set<String> input2;
     private Map<String, ByteBuffer > result;
-    private final SimpleDateFormat ymd;
-    private final SimpleDateFormat ym;
     private FileSystem hdfs;
 
     /**
@@ -180,7 +181,6 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
                 else if (tmp.contains("_cat_"))
                     result.put("cat_18", ByteBuffer.wrap(tmp.getBytes()));
-
             }
 
             // Write the results to the output stream
@@ -202,10 +202,14 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
                 // Store them in HDFS
                 Path iferror = new Path(error);
+                FSDataOutputStream fsDataOutputStream = hdfs.create(iferror);
 
-                FSDataOutputStream fsDataOutputStream = hdfs.create(iferror, false);
+                String toWrite = "error on regex;" +
+                        new String(input1[0].array(), "UTF-8") + ";" +
+                        ym.format(new java.util.Date(System.currentTimeMillis())) + ";" +
+                        ymd.format(new java.util.Date(System.currentTimeMillis()));
 
-                fsDataOutputStream.write(input1[0].array());
+                fsDataOutputStream.writeBytes(toWrite);
                 fsDataOutputStream.close();
 
             } else {
