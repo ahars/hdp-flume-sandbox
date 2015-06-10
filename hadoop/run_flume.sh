@@ -34,6 +34,9 @@ echo
 
 # Launch Hive
 hive -f hive/data_ct.hql
-hive -e 'select count(*) from data ;
-	select * from data limit 5 ; '
+
+hive -hiveconf month=$(date +"%Y%m") -hiveconf day=$(date +"%Y%m%d") -e 'alter table data add partition(mois_data=${hiveconf:month}, date_data=${hiveconf:day});'
+
+hive -e	'select count(*) from data ;
+	select * from data limit 5 ;'
 

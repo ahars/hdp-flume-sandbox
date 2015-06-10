@@ -15,19 +15,25 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Flume Serializer for events from Spideo
+ */
 public class FlumeEventCSVSerializer implements EventSerializer {
 
     private final static Logger logger = LoggerFactory.getLogger(FlumeEventCSVSerializer.class);
 
     // dynamic values from flume conf file
     public static final String REGEX = "regex";
-    public static final String IFERROR = "iferror";
+    public static final String PATHERROR = "pathError";
+    public static final String FILEERROR = "fileError";
 
     // Default values
     private final String DEFAULT_REGEX = "(.*)";
-    private final String DEFAULT_IFERROR = "error.csv";
+    private final String DEFAULT_PATHERROR = "/";
+    private final String DEFAULT_FILEERROR = "error.csv";
 
-    private final String iferror;
+    private final String fileError;
+    private final String pathError;
     private final Pattern regex;
     private final Pattern default_regex;
     private final OutputStream out;
@@ -35,6 +41,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     private ByteBuffer[] input1;
     private Set<String> input2;
     private Map<String, ByteBuffer > result;
+    private final SimpleDateFormat ymd;
+    private final SimpleDateFormat ym;
 
     /**
      * Constructor of the FlumeEventCSVSerializer
@@ -47,7 +55,10 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         this.out = out;
         this.input2 = new LinkedHashSet<String>();
         this.result = new HashMap<String, ByteBuffer>();
-        this.iferror = context.getString(IFERROR, DEFAULT_IFERROR);
+        this.fileError = context.getString(FILEERROR, DEFAULT_FILEERROR);
+        this.pathError = context.getString(PATHERROR, DEFAULT_PATHERROR);
+        this.ymd = new SimpleDateFormat("yyyyMMdd");
+        this.ym = new SimpleDateFormat("yyyyMM");
     }
 
     /**
@@ -173,11 +184,14 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
             if (matcher.find()) {
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-                String error = iferror.replace("date", sdf.format(new java.util.Date(System.currentTimeMillis())));
+                String error = pathError + fileError;
+                error = error.replace("yyyyMMdd", ymd.format(new java.util.Date(System.currentTimeMillis())));
+                error = error.replace("yyyyMM", ym.format(new java.util.Date(System.currentTimeMillis())));
 
-                // Store them in a file
+                // Store them in HDFS
                 PrintWriter file = new PrintWriter(new BufferedWriter(new FileWriter(error, true)));
+
+
                 alimOrderIndexer(matcher);
 
                 file.println(new String(input1[0].array(), "UTF-8"));
@@ -230,7 +244,10 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         writes(result.getOrDefault("cat_18", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
         writes(result.getOrDefault("cat_19", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
         writes(result.getOrDefault("cat_20", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
-        writes(result.getOrDefault("cat_21", ByteBuffer.wrap("NULL".getBytes())).array(), '\n');
+        writes(result.getOrDefault("cat_21", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+
+        writes(ym.format(new java.util.Date(System.currentTimeMillis())).getBytes(), ';');
+        writes(ymd.format(new java.util.Date(System.currentTimeMillis())).getBytes(), '\n');
     }
 
     /**
