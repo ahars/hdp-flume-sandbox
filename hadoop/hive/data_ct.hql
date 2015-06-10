@@ -4,8 +4,8 @@ create external table data (
 	cat_2	string, 
 	cat_3	string, 
 	cat_4	string, 
-	cat_5	string, 
-	cat_6	string,
+	cat_5	int, 
+	cat_6	int,
 	cat_7	string,
 	cat_8	string,
 	cat_9	string,
@@ -20,7 +20,8 @@ create external table data (
 	cat_18	string,
 	cat_19	string,
 	cat_20	string,
-	cat_21	string
+	cat_21	string,
+	cat_22  string
 )
 partitioned by (
 	mois_data string,

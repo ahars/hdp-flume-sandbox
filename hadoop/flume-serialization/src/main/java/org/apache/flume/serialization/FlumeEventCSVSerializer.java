@@ -41,6 +41,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
     private final OutputStream out;
     private final SimpleDateFormat ymd;
     private final SimpleDateFormat ym;
+    private final SimpleDateFormat ymdhms;
 
     private Matcher matcher;
     private ByteBuffer[] input1;
@@ -63,6 +64,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         this.pathError = context.getString(PATHERROR, DEFAULT_PATHERROR);
         this.ymd = new SimpleDateFormat("yyyyMMdd");
         this.ym = new SimpleDateFormat("yyyyMM");
+        this.ymdhms = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
 
         try {
             this.hdfs = FileSystem.get(new Configuration());
@@ -104,6 +107,7 @@ public class FlumeEventCSVSerializer implements EventSerializer {
             result.put("cat_1", ByteBuffer.wrap(converterDateTime(new String(input1[0].array(), "UTF-8")).getBytes()));
             result.put("cat_2", ByteBuffer.wrap(converterDate(new String(input1[1].array(), "UTF-8")).getBytes()));
             result.put("cat_4", ByteBuffer.wrap(input1[2].array()));
+            result.put("cat_22", ByteBuffer.wrap(ymdhms.format(new Date(System.currentTimeMillis())).getBytes()));
 
             if (!Arrays.equals(input1[4].array(), "-".getBytes()))
                 result.put("cat_20", ByteBuffer.wrap(input1[4].array()));
@@ -196,8 +200,8 @@ public class FlumeEventCSVSerializer implements EventSerializer {
                 alimOrderIndexer(matcher);
 
                 String error = pathError + fileError;
-                error = error.replace("yyyyMMdd", ymd.format(new java.util.Date(System.currentTimeMillis())));
-                error = error.replace("yyyyMM", ym.format(new java.util.Date(System.currentTimeMillis())));
+                error = error.replace("yyyyMMdd", ymd.format(new Date(System.currentTimeMillis())));
+                error = error.replace("yyyyMM", ym.format(new Date(System.currentTimeMillis())));
                 error = error.replace("uuid", UUID.randomUUID().toString());
 
                 // Store them in HDFS
@@ -206,8 +210,9 @@ public class FlumeEventCSVSerializer implements EventSerializer {
 
                 String toWrite = "error on regex;" +
                         new String(input1[0].array(), "UTF-8") + ";" +
-                        ym.format(new java.util.Date(System.currentTimeMillis())) + ";" +
-                        ymd.format(new java.util.Date(System.currentTimeMillis()));
+                        ymdhms.format(new Date(System.currentTimeMillis())) + ";" +
+                        ym.format(new Date(System.currentTimeMillis())) + ";" +
+                        ymd.format(new Date(System.currentTimeMillis()));
 
                 fsDataOutputStream.writeBytes(toWrite);
                 fsDataOutputStream.close();
@@ -260,9 +265,10 @@ public class FlumeEventCSVSerializer implements EventSerializer {
         writes(result.getOrDefault("cat_19", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
         writes(result.getOrDefault("cat_20", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
         writes(result.getOrDefault("cat_21", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
+        writes(result.getOrDefault("cat_22", ByteBuffer.wrap("NULL".getBytes())).array(), ';');
 
-        writes(ym.format(new java.util.Date(System.currentTimeMillis())).getBytes(), ';');
-        writes(ymd.format(new java.util.Date(System.currentTimeMillis())).getBytes(), '\n');
+        writes(ym.format(new Date(System.currentTimeMillis())).getBytes(), ';');
+        writes(ymd.format(new Date(System.currentTimeMillis())).getBytes(), '\n');
     }
 
     /**
